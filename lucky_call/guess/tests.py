@@ -89,3 +89,28 @@ class MakeGuessViewTests(test.TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(models.Guess.objects.count(), 0)
+
+    def test_do_not_allow_multiple_guesses_per_user(self):
+        data = {
+            'user_id': 'fake_user',
+            'keyword': 'fake_keyword',
+            'number': 486,
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(models.Guess.objects.count(), 1)
+
+        data = {
+            'user_id': 'fake_user',
+            'keyword': 'fake_keyword',
+            'number': 123,
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(
+            response.json(),
+            {'user_id': ['guess with this user id already exists.']}
+        )
+        self.assertEqual(models.Guess.objects.count(), 1)
