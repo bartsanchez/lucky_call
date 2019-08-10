@@ -1,4 +1,7 @@
 from django import test
+from django.urls import reverse
+
+from rest_framework import status
 
 from guess import models
 from guess import serializers
@@ -46,3 +49,49 @@ class GuessModelTests(test.TestCase):
 
         self.assertFalse(s.is_valid())
         self.assertIn('number', s.errors)
+
+
+class MakeGuessViewTests(test.TestCase):
+    def setUp(self):
+        self.url = reverse('make-guess')
+
+    def test_valid_guess(self):
+        self.assertEqual(models.Guess.objects.count(), 0)
+
+        data = {
+            'user_id': 'fake_user',
+            'keyword': 'fake_keyword',
+            'number': 888,
+            'timestamp': 1565471321,
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(models.Guess.objects.count(), 1)
+
+    def test_invalid_guess(self):
+        self.assertEqual(models.Guess.objects.count(), 0)
+
+        data = {
+            'user_id': 'fake_user',
+            'keyword': 'fake_keyword',
+            'number': 70,
+            'timestamp': 1565471321,
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(models.Guess.objects.count(), 0)
+
+    def test_incomplete_guess(self):
+        self.assertEqual(models.Guess.objects.count(), 0)
+
+        data = {
+            'keyword': 'fake_keyword',
+            'number': 486,
+            'timestamp': 1565471321,
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(models.Guess.objects.count(), 0)
