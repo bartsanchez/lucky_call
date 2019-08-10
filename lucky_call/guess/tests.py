@@ -14,7 +14,6 @@ class GuessModelTests(test.TestCase):
             'user_id': 'fake_user_id',
             'keyword': 'fake_keyword',
             'number': 666,
-            'timestamp': 1565460993,
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -30,7 +29,6 @@ class GuessModelTests(test.TestCase):
             'user_id': 'fake_user_id',
             'keyword': 'fake_keyword',
             'number': 99,
-            'timestamp': 1565460993,
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -43,7 +41,6 @@ class GuessModelTests(test.TestCase):
             'user_id': 'fake_user_id',
             'keyword': 'fake_keyword',
             'number': 1000,
-            'timestamp': 1565460993,
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -62,7 +59,6 @@ class MakeGuessViewTests(test.TestCase):
             'user_id': 'fake_user',
             'keyword': 'fake_keyword',
             'number': 888,
-            'timestamp': 1565471321,
         }
         response = self.client.post(self.url, data)
 
@@ -76,7 +72,6 @@ class MakeGuessViewTests(test.TestCase):
             'user_id': 'fake_user',
             'keyword': 'fake_keyword',
             'number': 70,
-            'timestamp': 1565471321,
         }
         response = self.client.post(self.url, data)
 
@@ -89,7 +84,6 @@ class MakeGuessViewTests(test.TestCase):
         data = {
             'keyword': 'fake_keyword',
             'number': 486,
-            'timestamp': 1565471321,
         }
         response = self.client.post(self.url, data)
 

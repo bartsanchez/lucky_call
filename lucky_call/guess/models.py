@@ -11,4 +11,4 @@ class Guess(models.Model):
             validators.MaxValueValidator(999)
         ]
     )
-    timestamp = models.PositiveIntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
