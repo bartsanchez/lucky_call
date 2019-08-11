@@ -113,3 +113,77 @@ class MakeGuessViewTests(test.TestCase):
             response.json(),
             {'user_email': ['guess with this user email already exists.']})
         self.assertEqual(models.Guess.objects.count(), 1)
+
+
+class ContestGuessRelantionshipTest(test.TestCase):
+    def test_no_contest_exist(self):
+        data = {
+            'user_email': 'test@example.com',
+            'keyword': 'fake_keyword',
+            'number': 666,
+        }
+        s = serializers.GuessSerializer(data=data)
+
+        self.assertTrue(s.is_valid())
+        s.save()
+
+        self.assertEqual(models.Guess.objects.count(), 1)
+
+        guess = models.Guess.objects.first()
+        self.assertIsNone(guess.contest)
+
+    def test_a_contest_exist(self):
+        contest = models.LuckyCallContest.objects.create(
+            keyword='fake_keyword',
+        )
+        data = {
+            'user_email': 'test@example.com',
+            'keyword': 'fake_keyword',
+            'number': 666,
+        }
+        s = serializers.GuessSerializer(data=data)
+
+        self.assertTrue(s.is_valid())
+        s.save()
+
+        self.assertEqual(models.Guess.objects.count(), 1)
+
+        guess = models.Guess.objects.first()
+        self.assertEqual(guess.contest, contest)
+
+    def test_a_new_contest_start(self):
+        contest = models.LuckyCallContest.objects.create(
+            keyword='fake_keyword',
+        )
+        data = {
+            'user_email': 'test@example.com',
+            'keyword': 'fake_keyword',
+            'number': 666,
+        }
+        s = serializers.GuessSerializer(data=data)
+
+        self.assertTrue(s.is_valid())
+        s.save()
+
+        self.assertEqual(models.Guess.objects.count(), 1)
+
+        guess = models.Guess.objects.first()
+        self.assertEqual(guess.contest, contest)
+
+        new_contest = models.LuckyCallContest.objects.create(
+            keyword='another_keyword',
+        )
+        data = {
+            'user_email': 'foo@bar.baz',
+            'keyword': 'another_keyword',
+            'number': 777,
+        }
+        s = serializers.GuessSerializer(data=data)
+
+        self.assertTrue(s.is_valid())
+        s.save()
+
+        self.assertEqual(models.Guess.objects.count(), 2)
+
+        new_guess = models.Guess.objects.get(user_email='foo@bar.baz')
+        self.assertEqual(new_guess.contest, new_contest)
