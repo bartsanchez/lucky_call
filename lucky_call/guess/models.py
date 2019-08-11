@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Guess(models.Model):
-    user_id = models.CharField(max_length=255, unique=True)
+    user_email = models.EmailField(unique=True)
     keyword = models.CharField(max_length=255)
     number = models.IntegerField(
         validators=[

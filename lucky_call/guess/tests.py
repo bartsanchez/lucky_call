@@ -11,7 +11,7 @@ class GuessModelTests(test.TestCase):
     def test_valid_guess(self):
         self.assertEqual(models.Guess.objects.count(), 0)
         data = {
-            'user_id': 'fake_user_id',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 666,
         }
@@ -26,7 +26,7 @@ class GuessModelTests(test.TestCase):
     def test_invalid_guess_low(self):
         self.assertEqual(models.Guess.objects.count(), 0)
         data = {
-            'user_id': 'fake_user_id',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 99,
         }
@@ -38,7 +38,7 @@ class GuessModelTests(test.TestCase):
     def test_invalid_guess_high(self):
         self.assertEqual(models.Guess.objects.count(), 0)
         data = {
-            'user_id': 'fake_user_id',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 1000,
         }
@@ -56,7 +56,7 @@ class MakeGuessViewTests(test.TestCase):
         self.assertEqual(models.Guess.objects.count(), 0)
 
         data = {
-            'user_id': 'fake_user',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 888,
         }
@@ -69,7 +69,7 @@ class MakeGuessViewTests(test.TestCase):
         self.assertEqual(models.Guess.objects.count(), 0)
 
         data = {
-            'user_id': 'fake_user',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 70,
         }
@@ -82,7 +82,7 @@ class MakeGuessViewTests(test.TestCase):
         self.assertEqual(models.Guess.objects.count(), 0)
 
         data = {
-            'keyword': 'fake_keyword',
+            'user_email': 'test@example.com',
             'number': 486,
         }
         response = self.client.post(self.url, data)
@@ -92,7 +92,7 @@ class MakeGuessViewTests(test.TestCase):
 
     def test_do_not_allow_multiple_guesses_per_user(self):
         data = {
-            'user_id': 'fake_user',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 486,
         }
@@ -102,7 +102,7 @@ class MakeGuessViewTests(test.TestCase):
         self.assertEqual(models.Guess.objects.count(), 1)
 
         data = {
-            'user_id': 'fake_user',
+            'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 123,
         }
@@ -111,6 +111,5 @@ class MakeGuessViewTests(test.TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual(
             response.json(),
-            {'user_id': ['guess with this user id already exists.']}
-        )
+            {'user_email': ['guess with this user email already exists.']})
         self.assertEqual(models.Guess.objects.count(), 1)
