@@ -7,6 +7,10 @@ class LuckyCallContest(models.Model):
     result = models.PositiveIntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def guesses(self):
+        return self.guess_set.all()
+
     @classmethod
     def get_active_contest(cls):
         if not cls.objects.exists():

@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
+from guess import factories
 from guess import models
 from guess import serializers
 
@@ -187,3 +188,26 @@ class ContestGuessRelantionshipTest(test.TestCase):
 
         new_guess = models.Guess.objects.get(user_email='foo@bar.baz')
         self.assertEqual(new_guess.contest, new_contest)
+
+
+class LucyContestModelTests(test.TestCase):
+    def test_guesses(self):
+        contest = factories.LuckyCallContestFactory(keyword='foo')
+
+        guess_1 = factories.GuessFactory(
+            user_email='user1@example.com',
+            keyword='foo',
+            number=111,
+        )
+        guess_2 = factories.GuessFactory(
+            user_email='user2@example.com',
+            keyword='foo',
+            number=222,
+        )
+
+        self.assertQuerysetEqual(
+            contest.guesses,
+            models.Guess.objects.filter(pk__in=(guess_1.pk, guess_2.pk)),
+            ordered=False,
+            transform=lambda x: x
+        )
