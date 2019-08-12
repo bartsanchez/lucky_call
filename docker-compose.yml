@@ -1,0 +1,18 @@
+version: '3'
+services:
+    db:
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: fake_db_password
+            POSTGRES_USER: fake_db_user
+            POSTGRES_DB: luckycall
+    app:
+        build: .
+        restart: always
+        ports:
+            - 80:80
+        depends_on:
+            - db
+        links:
+            - db
