@@ -211,3 +211,45 @@ class LucyContestModelTests(test.TestCase):
             ordered=False,
             transform=lambda x: x
         )
+
+    def test_is_winner(self):
+        contest = factories.LuckyCallContestFactory(result=1364)
+
+        self.assertTrue(contest.is_winner())
+
+    def test_is_not_winner(self):
+        contest = factories.LuckyCallContestFactory(result=999)
+
+        self.assertFalse(contest.is_winner())
+
+
+class ExampleWinnerScenario(test.TestCase):
+    def test_someone_won(self):
+        contest = factories.LuckyCallContestFactory(keyword='foo')
+
+        factories.GuessFactory(
+            user_email='user1@example.com',
+            keyword='foo',
+            number=111,
+        )
+        factories.GuessFactory(
+            user_email='user2@example.com',
+            keyword='foo',
+            number=222,
+        )
+
+        contest = models.LuckyCallContest.objects.get(pk=contest.pk)
+
+        self.assertIsNone(contest.check_winner())
+        self.assertEqual(contest.result, 333)
+        self.assertIsNone(contest.winner)
+
+        guess = factories.GuessFactory(
+            user_email='user3@example.com',
+            keyword='foo',
+            number=107,
+        )
+
+        self.assertEqual(contest.check_winner(), guess)
+        self.assertEqual(contest.result, 440)
+        self.assertEqual(contest.winner, guess)
