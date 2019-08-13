@@ -12,8 +12,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . /opt/luckycall/
 
-ENV DJANGO_SETTINGS_MODULE lucky_call.settings.prod
-
 WORKDIR /opt/luckycall/lucky_call/
 
 CMD /opt/luckycall/entrypoint.sh

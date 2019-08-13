@@ -12,6 +12,8 @@ services:
         restart: always
         ports:
             - 80:80
+        environment:
+            DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
         depends_on:
             - db
         links:
