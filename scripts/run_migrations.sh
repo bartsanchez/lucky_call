@@ -22,5 +22,3 @@ done
 
 $APP_EXEC migrate --noinput
 echo "Database migrated."
-
-$APP_EXEC runserver 0.0.0.0:80

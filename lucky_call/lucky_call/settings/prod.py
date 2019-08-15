@@ -1,5 +1,6 @@
 from .base import *
 
+DEBUG = False
 
 DATABASES = {
     'default': {
@@ -10,3 +11,5 @@ DATABASES = {
         'PASSWORD': 'fake_db_password',
     }
 }
+
+ALLOWED_HOSTS = ['*']

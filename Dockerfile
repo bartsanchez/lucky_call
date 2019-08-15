@@ -13,5 +13,3 @@ RUN pip3 install -r requirements.txt
 COPY . /opt/luckycall/
 
 WORKDIR /opt/luckycall/lucky_call/
-
-CMD /opt/luckycall/entrypoint.sh
