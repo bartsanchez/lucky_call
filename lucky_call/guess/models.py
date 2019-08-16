@@ -1,5 +1,6 @@
 from django.core import validators
 from django.db import models
+from django.db import transaction
 
 
 class LuckyCallContest(models.Model):
@@ -37,6 +38,7 @@ class LuckyCallContest(models.Model):
         # https://www.mathsisfun.com/divisibility-rules.html
         return self.result != 0 and self.result % 11 == 0
 
+    @transaction.atomic  # everything will work or nothing will do
     def check_winner(self):
         if self.winner:
             return self.winner
