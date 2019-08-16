@@ -15,8 +15,10 @@ services:
             DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
         depends_on:
             - db
+            - redis
         links:
             - db
+            - redis
 
     app01:
         build: .
@@ -26,8 +28,10 @@ services:
             DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
         depends_on:
             - db
+            - redis
         links:
             - db
+            - redis
 
     app02:
         build: .
@@ -37,8 +41,10 @@ services:
             DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
         depends_on:
             - db
+            - redis
         links:
             - db
+            - redis
 
     web:
         image: nginx
@@ -53,3 +59,19 @@ services:
         links:
             - app01
             - app02
+
+    redis:
+        image: redis
+        restart: always
+
+    worker:
+        build: .
+        command: celery -A lucky_call.celery worker
+        restart: always
+        environment:
+            DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
+        depends_on:
+            - db
+            - redis
+        links:
+            - redis
