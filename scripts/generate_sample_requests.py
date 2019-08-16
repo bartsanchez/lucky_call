@@ -33,8 +33,11 @@ def main(args):
             'keyword': keyword,
             'number': number,
         }
-        line = json.dumps(data).replace('"', r'\"')
-        print('{} "{}" &'.format(curl_cmd, line))
+        json_data = json.dumps(data).replace('"', r'\"')
+        line = '{} "{}" &'.format(curl_cmd, json_data)
+        if i == args.number_of_samples - 1:
+            line = line[:-2]
+        print(line)
 
 
 if __name__ == '__main__':
