@@ -24,6 +24,7 @@ class Command(base.BaseCommand):
         self.stdout.write('The received requests were:')
         for guess in contest.guesses:
             data = (
+                str(guess.pk),
                 guess.timestamp.isoformat(),
                 guess.user_email,
                 guess.keyword,
