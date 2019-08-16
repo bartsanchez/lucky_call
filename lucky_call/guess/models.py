@@ -40,6 +40,11 @@ class LuckyCallContest(models.Model):
 
     @transaction.atomic  # everything will work or nothing will do
     def check_winner(self):
+        # With the current implementation a database lock is not very
+        # useful since we are using a dedicated command to check the winner
+        # However, if this method is intended to be used in a API endpoint,
+        # then a global lock could be implemented; i.e.,
+        # https://www.postgresql.org/docs/9.1/explicit-locking.html#ADVISORY-LOCKS  # noqa
         if self.winner:
             return self.winner
 
