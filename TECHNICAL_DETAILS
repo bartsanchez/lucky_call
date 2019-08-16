@@ -1,0 +1,113 @@
+Implementation
+==============
+
+By analyzing the nature of the problem, it is natural to me to think that the key part of the
+solution is to be able to receive multiple requests in a short period of time without breaking
+anything.
+
+Some of the considerations that I made were:
+
+* The listeners of our radio station will be waiting for hearing the keyword.
+
+* Once the keyword is said, most of the listeners will make multiple and concurrent requests to
+  our server.
+
+* To decide who's the winner is not needed to be done immediately. Most probably it will be
+  announced in our radio after a certain time.
+
+For those reasons, the provided solution intends to implement an API with low latency in the
+requests, that process the content of those requests asynchronously (with a queue system).
+That way, we can escalate our API servers horizontally behind our load balancer to fit with
+our needs in a easy way.
+
+Everything that happens after our API servers receiving the requests (and creating a task for
+processing the request info) is not expected to be a bottleneck; since, as I stated before,
+the winner hasn't be decided immediately. However, we could set extra workers to consume
+our Celery tasks, if needed.
+
+Considerations
+==============
+
+* By not checking the winner inside each request and delaying this task to be done in a later step
+  with a dedicated command (inside a single process) we do not need to handle locks for the
+  database (in order to avoid race conditions).
+
+* Each processed request will send the current timestamp to the generated task for creating
+  a guess. It has two consequences:
+
+  - We could have two guesses with the same exact timestamp (two API servers are in the same
+    exact moment). If that happens, the winner will be the one that is returned first by the
+    Django queryset (it's ordered by timestamp). As a note, datetime objects are used and they
+    have microseconds (a millionth of a second) precision in Python. Here the luck will be even
+    a more important factor for our contest. We could set a second order preference, if needed.
+
+  - A request can be processed but it can be slow creating the queue task, or even the task
+    can be not consumed very fast. It will end with some guesses objects created after others
+    but with a lower timestamp. I've set the PK for the guess object after checking the winner
+    summary to highlight this expected (and controlled) behaviour.
+
+* The keyword is expected to be correct whatever capitalization it has. I am converting to
+  lowercase every keyword to handle this.
+
+Technical stuff
+===============
+
+* Docker as our container system
+* Docker Compose as our orchestration tool
+* Django (and DRF) for our API servers
+* Gunicorn for serving our wsgi app
+* Nginx for the load balancer
+* Celery as our queue system
+* Redis for our message broker
+* Tox for running both tests and syntax checking
+
+Further improvements
+====================
+
+* Currently two API servers behind our load balancer has been hard-coded using our orchestration
+  tool (docker-compose). It could be improved by using a more flexible orchestration tool as
+  Kubernetes or Apache Mesos.
+
+* I am doing a previous checking of the received data before creating the task to be consumed at
+  a later stage: checking that the serialization is valid (the received parameters are correct).
+  We could remove this checking and just do that inside the generated task to lower even more
+  the API response, but we'll end up with extra tasks created, the new ones created with invalid
+  data. We can decide if we want to escalate our API servers or modifying this depending on our
+  status.
+
+* A database index could be added to the *timestamp* column in the Guess table. This would improve
+  the time involved in iterating over the already processed guesses. It wasn't considered crucial
+  at this moment for the considerations mentioned before.
+
+* We could add some other endpoints to handle the system (like creating a new contest or checking
+  the winner)
+
+* We could send an email to each request telling the the owner if they won the contest or not.
+  It should be a couple of lines using Django (no considering configuration).
+
+* Some authentication system could be implemented. Now I've considered that any radio listener
+  could be a potential winner and thus no previous authentication or registration is needed, just
+  a valid email in the request.
+
+* Add some kind of authorization, mainly for administrator purposes (be able to create new
+  contests or checking the winner for an existing one).
+
+Fairness of the contest
+=======================
+
+Personally I consider this contest totally unfair, since probably people living near our load
+balancer and with good Internet connections will be the first in reaching our system and probably
+win the contest. However, since it's named Lucky Call, I suppose that people trying to win are
+aware that no intelligence or skill are involved here, so they will think it will be just a matter
+of good or bad luck.
+
+The duration of the contest will depend on one key aspect that hasn't mentioned in the problem
+definition, that is, do the listeners know that they win if the result if multiple of 11
+or not?
+
+* If they do, probably the first received request will be the winner, since that person most
+  probably will send a 3-digits number multiple of 11. However, this is not always true!
+
+* If they don't, or the first person provides a erroneous number, then luck will be completely
+  influential here, since it's not probable that a request know the exact status of the contest
+  result at any precise moment.
