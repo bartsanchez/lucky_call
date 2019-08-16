@@ -77,3 +77,6 @@ class Guess(models.Model):
     def is_correct(self):
         # keyword is considered valid case-insensitive
         return self.keyword.lower() == self.contest.keyword.lower()
+
+    def __str__(self):
+        return self.user_email

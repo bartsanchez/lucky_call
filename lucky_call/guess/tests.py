@@ -9,6 +9,10 @@ from guess import serializers
 
 
 class GuessModelTests(test.TestCase):
+    def test_representation(self):
+        guess = factories.GuessFactory(user_email='fake@email.com')
+        self.assertIn('fake@email.com', repr(guess))
+
     def test_valid_guess(self):
         self.assertEqual(models.Guess.objects.count(), 0)
         data = {
