@@ -35,7 +35,7 @@ class LuckyCallContest(models.Model):
         # are checking the winner in each request (it could lead to
         # performance issues)
         # https://www.mathsisfun.com/divisibility-rules.html
-        return self.result % 11 == 0
+        return self.result != 0 and self.result % 11 == 0
 
     def check_winner(self):
         if self.winner:
@@ -48,6 +48,7 @@ class LuckyCallContest(models.Model):
             guess.save()
             if self.is_winner():
                 self.winner = guess
+                self.save()
                 return guess
 
             self.save()
