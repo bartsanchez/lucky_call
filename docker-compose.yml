@@ -10,7 +10,7 @@ services:
 
     run_migrations:
         build: .
-        command: ../scripts/entrypoint.sh
+        command: ../scripts/run_migrations.sh
         environment:
             DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
         depends_on:
@@ -18,9 +18,20 @@ services:
         links:
             - db
 
-    app:
+    app01:
         build: .
-        command: gunicorn lucky_call.wsgi:application --bind 0.0.0.0:8000
+        command: gunicorn lucky_call.wsgi:application --bind 0.0.0.0:8000 --access-logfile -
+        restart: always
+        environment:
+            DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
+        depends_on:
+            - db
+        links:
+            - db
+
+    app02:
+        build: .
+        command: gunicorn lucky_call.wsgi:application --bind 0.0.0.0:8000 --access-logfile -
         restart: always
         environment:
             DJANGO_SETTINGS_MODULE: lucky_call.settings.prod
@@ -37,6 +48,8 @@ services:
         ports:
             - 80:80
         depends_on:
-            - app
+            - app01
+            - app02
         links:
-            - app
+            - app01
+            - app02
