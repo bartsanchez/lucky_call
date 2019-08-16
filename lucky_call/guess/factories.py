@@ -1,3 +1,5 @@
+import datetime
+
 from factory import django
 
 from guess import models
@@ -19,3 +21,4 @@ class GuessFactory(django.DjangoModelFactory):
     user_email = 'test@example.com'
     keyword = 'fake_keyword'
     number = 666
+    timestamp = datetime.datetime.now()

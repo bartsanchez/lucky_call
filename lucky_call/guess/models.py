@@ -72,7 +72,7 @@ class Guess(models.Model):
             validators.MaxValueValidator(999)
         ]
     )
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     contest = models.ForeignKey(
         LuckyCallContest,
         default=LuckyCallContest.get_active_contest,

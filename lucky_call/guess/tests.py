@@ -1,3 +1,5 @@
+import datetime
+
 from django import test
 from django.urls import reverse
 
@@ -20,6 +22,7 @@ class GuessModelTests(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 666,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -35,6 +38,7 @@ class GuessModelTests(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 99,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -47,6 +51,7 @@ class GuessModelTests(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 1000,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -127,6 +132,7 @@ class ContestGuessRelantionshipTest(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 666,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -146,6 +152,7 @@ class ContestGuessRelantionshipTest(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 666,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -165,6 +172,7 @@ class ContestGuessRelantionshipTest(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 666,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -183,6 +191,7 @@ class ContestGuessRelantionshipTest(test.TestCase):
             'user_email': 'foo@bar.baz',
             'keyword': 'another_keyword',
             'number': 777,
+            'timestamp': datetime.datetime.now(),
         }
         s = serializers.GuessSerializer(data=data)
 
@@ -280,6 +289,7 @@ class CreateGuessTaskTests(test.TestCase):
             'user_email': 'test@example.com',
             'keyword': 'fake_keyword',
             'number': 666,
+            'timestamp': datetime.datetime.now(),
         }
         self.assertEqual(tasks.create_guess(data=data), 'OK')
 
@@ -290,6 +300,7 @@ class CreateGuessTaskTests(test.TestCase):
         data = {
             'keyword': 'fake_keyword',
             'number': 666,
+            'timestamp': datetime.datetime.now(),
         }
         self.assertEqual(tasks.create_guess(data=data), 'KO')
 
