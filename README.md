@@ -101,7 +101,7 @@ we have two apps in different containers).
 
 ### Check the winner
 
-You can check at any momment if there is a winner for the last contest with:
+You can check at any moment if there is a winner for the last contest with:
 
 ```bash
 $ docker-compose exec app01 python3 manage.py check_winner
@@ -118,7 +118,7 @@ will be linked to this new contest.
 
 ### Stopping thee application
 
-In order to stop the aplication, use:
+In order to stop the application, use:
 * CTRL + C in the shell if you run the app without -d option
 * (with -d) Go to a shell and (inside your virtualenv) execute: $ docker-compose stop
 
