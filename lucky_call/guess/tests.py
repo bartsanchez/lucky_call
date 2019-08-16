@@ -222,6 +222,19 @@ class LucyContestModelTests(test.TestCase):
 
         self.assertFalse(contest.is_winner())
 
+    def test_we_have_already_a_winner(self):
+        guess = factories.GuessFactory(
+            user_email='user1@example.com',
+            keyword='foo',
+            number=111,
+        )
+        contest = factories.LuckyCallContestFactory(
+            keyword='foo',
+            winner=guess,
+        )
+
+        self.assertEqual(contest.check_winner(), guess)
+
 
 class ExampleWinnerScenario(test.TestCase):
     def test_someone_won(self):
