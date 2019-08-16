@@ -1,6 +1,7 @@
 from .base import *
 
 DEBUG = False
+CELERY_TASK_ALWAYS_EAGER = False
 
 DATABASES = {
     'default': {

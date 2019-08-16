@@ -6,6 +6,7 @@ from rest_framework import status
 from guess import factories
 from guess import models
 from guess import serializers
+from guess import tasks
 
 
 class GuessModelTests(test.TestCase):
@@ -67,7 +68,7 @@ class MakeGuessViewTests(test.TestCase):
         }
         response = self.client.post(self.url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertEqual(models.Guess.objects.count(), 1)
 
     def test_invalid_guess(self):
@@ -103,7 +104,7 @@ class MakeGuessViewTests(test.TestCase):
         }
         response = self.client.post(self.url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertEqual(models.Guess.objects.count(), 1)
 
         data = {
@@ -116,7 +117,7 @@ class MakeGuessViewTests(test.TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual(
             response.json(),
-            {'user_email': ['guess with this user email already exists.']})
+            {'errors': ['Invalid request.']})
         self.assertEqual(models.Guess.objects.count(), 1)
 
 
@@ -270,3 +271,26 @@ class ExampleWinnerScenario(test.TestCase):
         self.assertEqual(contest.check_winner(), guess)
         self.assertEqual(contest.result, 440)
         self.assertEqual(contest.winner, guess)
+
+
+class CreateGuessTaskTests(test.TestCase):
+    def test_valid_guess(self):
+        self.assertEqual(models.Guess.objects.count(), 0)
+        data = {
+            'user_email': 'test@example.com',
+            'keyword': 'fake_keyword',
+            'number': 666,
+        }
+        self.assertEqual(tasks.create_guess(data=data), 'OK')
+
+        self.assertEqual(models.Guess.objects.count(), 1)
+
+    def test_invalid_guess(self):
+        self.assertEqual(models.Guess.objects.count(), 0)
+        data = {
+            'keyword': 'fake_keyword',
+            'number': 666,
+        }
+        self.assertEqual(tasks.create_guess(data=data), 'KO')
+
+        self.assertEqual(models.Guess.objects.count(), 0)
