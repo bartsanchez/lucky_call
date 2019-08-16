@@ -32,6 +32,9 @@ Considerations
   with a dedicated command (inside a single process) we do not need to handle locks for the
   database (in order to avoid race conditions).
 
+* Another advantage of the previous statement is that we are not forced to check the divisibility
+  of results in a very efficient way: ee do not have decide the winner very fast.
+
 * Each processed request will send the current timestamp to the generated task for creating
   a guess. It has two consequences:
 
@@ -74,6 +77,9 @@ Further improvements
   the API response, but we'll end up with extra tasks created, the new ones created with invalid
   data. We can decide if we want to escalate our API servers or modifying this depending on our
   status.
+
+* As mentioned before, we could improve the algorithm for checking the divisibility of the
+  results. It is explained as a code comment in its corresponding place.
 
 * A database index could be added to the *timestamp* column in the Guess table. This would improve
   the time involved in iterating over the already processed guesses. It wasn't considered crucial
