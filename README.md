@@ -120,7 +120,11 @@ will be linked to this new contest.
 
 In order to stop the application, use:
 * CTRL + C in the shell if you run the app without -d option
-* (with -d) Go to a shell and (inside your virtualenv) execute: $ docker-compose stop
+* (with -d) Go to a shell and (inside your virtualenv) execute:
+
+```bash
+$ docker-compose stop
+```
 
 Once your application has been stopped, you can delete the containers with the command:
 
